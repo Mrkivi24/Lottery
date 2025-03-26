@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Pieslēgšanās</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-box {
+            background: rgba(44, 62, 80, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: white;
+            text-shadow: 0 0 10px rgba(142, 68, 173, 0.7);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">TikTok Loterija</div>
+            <h1 style="text-align: center; margin-bottom: 30px;">Admin login</h1>
+            
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label for="username">Lietotājvārds:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Parole:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit">Pieslēgties</button>
+                
+                {% if error %}
+                <div class="error-message">{{ error }}</div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+</html>

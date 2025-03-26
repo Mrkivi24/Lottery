@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Loterija</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+       
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">TikTok Loterija</div>
+        </header>
+        
+        <div class="lottery-card">
+            <h1>Pievienojieties Loterijai!</h1>
+            <form id="lotteryForm" action="/submit_idea" method="POST">
+                <div class="form-group">
+                    <label for="username">Tavs TikTok lietotājvārds:</label>
+                    <input type="text" id="username" name="username" required placeholder="@lietotājvārds">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="followed" name="followed" required>
+                    <label for="followed">Esmu sekots abiem kontiem @Piemērs1 un @Piemērs2</label>
+                </div>
+                
+                <button type="submit">Iesniegt pieteikumu</button>
+            </form>
+        </div>
+        
+        <div class="rules">
+            <h2>Loterijas noteikumi</h2>
+            <ol>
+                <li>Jums jāseko abiem norādītajiem TikTok kontiem</li>
+                <li>Viens pieteikums vienam lietotājam</li>
+                <li>Uzvarētājs tiks izvēlēts nejauši ar rata palīdzību.</li>
+                <li>Rezultāti tiks parādīti tiešraides laikā.</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Veiksmīgi!</h2>
+            <p>Jūsu pieteikums ir veiksmīgi iesniegts!</p>
+            <p>Novēlam veiksmi loterijā!</p>
+            <button onclick="closeModal()">Aizvērt</button>
+        </div>
+    </div>
+    
+    <script>
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-${size}px`;
+                
+                const duration = Math.random() * 10 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                
+                particles.appendChild(particle);
+            }
+        }
+        
+        document.getElementById('lotteryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            
+            if (!username.startsWith('@')) {
+                alert('Lūdzu ievadiet lietotājvārdu ar @ simbolu!');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/check_username', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `username=${encodeURIComponent(username)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.exists) {
+                    alert('Šis lietotājvārds jau ir reģistrēts!');
+                    return;
+                }
+                
+                this.submit();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Radās kļūda. Lūdzu, mēģiniet vēlreiz.');
+            }
+        });
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            document.getElementById('successModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+        
+        window.onload = createParticles;
+    </script>
+</body>
+</html>
